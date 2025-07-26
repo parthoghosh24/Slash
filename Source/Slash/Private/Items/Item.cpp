@@ -3,6 +3,7 @@
 
 #include "Items/Item.h"
 #include "Components/SphereComponent.h"
+#include "Characters/Echo.h"
 
 // Sets default values
 AItem::AItem()
@@ -44,18 +45,23 @@ float AItem::TransformCos()
 void AItem::OnSphereOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
 	const FString OtherActorName = OtherActor->GetName();
-	if (GEngine)
+	AEcho* Echo = Cast<AEcho>(OtherActor);
+	
+	if (Echo)
 	{
-		GEngine->AddOnScreenDebugMessage(1, 5.f, FColor::Red, OtherActorName);
+		Echo->SetOverlappingItem(this);
+
 	}
 }
 
 void AItem::OnSphereOverlapEnd(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex)
 {
-	const FString OtherActorName = FString("Ending overlap with: ") + OtherActor->GetName();
-	if (GEngine)
+	AEcho* Echo = Cast<AEcho>(OtherActor);
+
+	if (Echo)
 	{
-		GEngine->AddOnScreenDebugMessage(1, 5.f, FColor::Blue, OtherActorName);
+		Echo->SetOverlappingItem(nullptr);
+
 	}
 }
 

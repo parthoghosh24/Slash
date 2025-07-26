@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
+#include "CharacterTypes.h"
 #include "InputActionValue.h"
 #include "Echo.generated.h"
 
@@ -13,6 +14,9 @@ class UPawnMovementComponent;
 class USpringArmComponent;
 class UCameraComponent;
 class UGroomComponent;
+class AItem;
+
+
 
 UCLASS()
 class SLASH_API AEcho : public ACharacter
@@ -29,12 +33,16 @@ public:
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
+	FORCEINLINE void SetOverlappingItem(AItem* Item) { OverlappingItem = Item; }
+	FORCEINLINE ECharacterState GetCharacterState() const { return CharacterState; }
+
 	
 
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
+	ECharacterState CharacterState = ECharacterState::ECS_Unequipped;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Input")
 	UInputAction* MoveAction;
@@ -69,10 +77,13 @@ protected:
 	UPROPERTY(VisibleAnywhere, Category = "Input")
 	UGroomComponent* Eyebrows;
 
+	UPROPERTY(VisibleInstanceOnly)
+	AItem* OverlappingItem;
+
 
 	void Move(const FInputActionValue& Value);
 	void Look(const FInputActionValue& Value);
 	void HandleJump();
-	void Equip();
+	void EKeyPressed();
 	void Attack();
 };

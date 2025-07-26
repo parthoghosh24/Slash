@@ -11,6 +11,8 @@
 #include "InputAction.h"
 #include "InputMappingContext.h"
 #include "GroomComponent.h"
+#include "Items/Item.h"
+#include "Items/Weapon.h"
 
 // Sets default values
 AEcho::AEcho()
@@ -93,6 +95,16 @@ void AEcho::HandleJump()
 	Jump();
 }
 
+void AEcho::EKeyPressed()
+{
+	AWeapon* OverlappingWeapon = Cast<AWeapon>(OverlappingItem);
+	if (OverlappingWeapon)
+	{
+		OverlappingWeapon->Equip(GetMesh(), FName("RightHandSocket"));
+		CharacterState = ECharacterState::ECS_EquippedOneHandedWeapon;
+	}
+}
+
 // Called to bind functionality to input
 void AEcho::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 {
@@ -103,6 +115,7 @@ void AEcho::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 		EnhancedInputComponent->BindAction(MoveAction, ETriggerEvent::Triggered, this, &AEcho::Move);
 		EnhancedInputComponent->BindAction(LookAction, ETriggerEvent::Triggered, this, &AEcho::Look);
 		EnhancedInputComponent->BindAction(JumpAction, ETriggerEvent::Triggered, this, &AEcho::HandleJump);
+		EnhancedInputComponent->BindAction(EquipAction, ETriggerEvent::Triggered, this, &AEcho::EKeyPressed);
 	}
 
 }
