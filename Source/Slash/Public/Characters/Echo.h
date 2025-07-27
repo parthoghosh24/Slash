@@ -15,6 +15,7 @@ class USpringArmComponent;
 class UCameraComponent;
 class UGroomComponent;
 class AItem;
+class UAnimMontage;
 
 
 
@@ -43,6 +44,9 @@ protected:
 	virtual void BeginPlay() override;
 
 	ECharacterState CharacterState = ECharacterState::ECS_Unequipped;
+
+	UPROPERTY(BlueprintReadWrite)
+	EActionState ActionState = EActionState::EAS_Unoccupied;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Input")
 	UInputAction* MoveAction;
@@ -80,10 +84,21 @@ protected:
 	UPROPERTY(VisibleInstanceOnly)
 	AItem* OverlappingItem;
 
+	/*Animation montages*/
+
+	UPROPERTY(EditDefaultsOnly, Category = Montages)
+	UAnimMontage* AttackMontage;
+
 
 	void Move(const FInputActionValue& Value);
 	void Look(const FInputActionValue& Value);
 	void HandleJump();
 	void EKeyPressed();
 	void Attack();
+	void PlayAttackMontage();
+
+	UFUNCTION(BlueprintCallable)
+	void AttackEnd();
+
+	bool CanAttack() const;
 };

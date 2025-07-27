@@ -8,6 +8,14 @@
 
 class USphereComponent;
 
+
+UENUM(BlueprintType)
+enum class EItemState : uint8
+{
+	ECS_Hovering UMETA(DisplayName = "Hovering"),
+	ECS_Equipped UMETA(DisplayName = "Equipped"),
+};
+
 UCLASS()
 class SLASH_API AItem : public AActor
 {
@@ -23,6 +31,8 @@ public:
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
+
+	EItemState ItemState = EItemState::ECS_Hovering;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
 	float RunningTime;
