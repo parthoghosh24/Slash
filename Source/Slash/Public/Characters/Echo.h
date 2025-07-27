@@ -117,4 +117,7 @@ protected:
 
 	UFUNCTION(BlueprintCallable)
 	void Arm();
+
+	UFUNCTION(BlueprintCallable)
+	void FinishEquipping();
 };

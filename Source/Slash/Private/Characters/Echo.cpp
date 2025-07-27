@@ -68,11 +68,7 @@ void AEcho::Tick(float DeltaTime)
 
 void AEcho::Move(const FInputActionValue& Value)
 {
-	if(GEngine)
-	{
-		GEngine->AddOnScreenDebugMessage(1, 15.f, FColor::Cyan, FString(UEnum::GetValueAsString(CharacterState)));
-	}
-	if (ActionState == EActionState::EAS_Attacking) return;
+	if (ActionState != EActionState::EAS_Unoccupied) return;
 	const FVector2D MovementVector = Value.Get<FVector2D>();
 
 	const FRotator Rotation = Controller->GetControlRotation();
@@ -187,6 +183,11 @@ void AEcho::Arm()
 	}
 }
 
+void AEcho::FinishEquipping()
+{
+	ActionState = EActionState::EAS_Unoccupied;
+}
+
 void AEcho::EKeyPressed()
 {
 	AWeapon* OverlappingWeapon = Cast<AWeapon>(OverlappingItem);
@@ -203,12 +204,14 @@ void AEcho::EKeyPressed()
 		{
 			PlayEquipMontage(FName("Unequip"));
 			CharacterState = ECharacterState::ECS_Unequipped;
+			ActionState = EActionState::EAS_EquippingWeapon;
 		}
 
 		else if (CanArm())
 		{
 			PlayEquipMontage(FName("Equip"));
 			CharacterState = ECharacterState::ECS_EquippedOneHandedWeapon;
+			ActionState = EActionState::EAS_EquippingWeapon;
 		}
 	}
 }
