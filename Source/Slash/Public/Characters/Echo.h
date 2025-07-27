@@ -16,6 +16,7 @@ class UCameraComponent;
 class UGroomComponent;
 class AItem;
 class UAnimMontage;
+class AWeapon;
 
 
 
@@ -89,6 +90,12 @@ protected:
 	UPROPERTY(EditDefaultsOnly, Category = Montages)
 	UAnimMontage* AttackMontage;
 
+	UPROPERTY(EditDefaultsOnly, Category = Montages)
+	UAnimMontage* EquipMontage;
+
+	UPROPERTY(VisibleAnywhere, Category = Weapon)
+	AWeapon* EquippedWeapon;
+
 
 	void Move(const FInputActionValue& Value);
 	void Look(const FInputActionValue& Value);
@@ -96,9 +103,18 @@ protected:
 	void EKeyPressed();
 	void Attack();
 	void PlayAttackMontage();
+	void PlayEquipMontage(FName SectionName);
 
 	UFUNCTION(BlueprintCallable)
 	void AttackEnd();
 
 	bool CanAttack() const;
+	bool CanArm() const;
+	bool CanDisarm() const;
+
+	UFUNCTION(BlueprintCallable)
+	void Disarm();
+
+	UFUNCTION(BlueprintCallable)
+	void Arm();
 };
