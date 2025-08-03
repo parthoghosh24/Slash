@@ -17,6 +17,7 @@ class UGroomComponent;
 class AItem;
 class UAnimMontage;
 class AWeapon;
+class UBoxComponent;
 
 
 
@@ -96,6 +97,15 @@ protected:
 	UPROPERTY(VisibleAnywhere, Category = Weapon)
 	AWeapon* EquippedWeapon;
 
+	UPROPERTY(VisibleAnywhere, Category = "Weapon Properties")
+	UBoxComponent* FootBox;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
+	USceneComponent* FootBoxTraceStart;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
+	USceneComponent* FootBoxTraceEnd;
+
 
 	void Move(const FInputActionValue& Value);
 	void Look(const FInputActionValue& Value);
@@ -120,4 +130,11 @@ protected:
 
 	UFUNCTION(BlueprintCallable)
 	void FinishEquipping();
+
+	UFUNCTION()
+	void OnBoxOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
+
+	UFUNCTION(BlueprintCallable)
+	void SetBoxCollsion(ECollisionEnabled::Type CollisonEnabled);
+
 };

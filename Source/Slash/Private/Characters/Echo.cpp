@@ -3,6 +3,7 @@
 
 #include "Characters/Echo.h"
 #include "Components/InputComponent.h"
+#include "Components/BoxComponent.h"
 #include "GameFramework/FloatingPawnMovement.h"
 #include "GameFramework/SpringArmComponent.h"
 #include "Camera/CameraComponent.h"
@@ -14,6 +15,7 @@
 #include "Items/Item.h"
 #include "Items/Weapon.h"
 #include "Animation/AnimMontage.h"
+#include "Kismet/KismetSystemLibrary.h"
 
 // Sets default values
 AEcho::AEcho()
@@ -41,6 +43,19 @@ AEcho::AEcho()
 	Eyebrows->AttachmentName = FString("head");
 
 	AutoPossessPlayer = EAutoReceiveInput::Player0;
+	
+	FootBox = CreateDefaultSubobject<UBoxComponent>(TEXT("FootBox"));
+	FootBox->SetupAttachment(GetMesh());
+
+	FootBox->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+	FootBox->SetCollisionResponseToAllChannels(ECollisionResponse::ECR_Overlap);
+	FootBox->SetCollisionResponseToChannel(ECollisionChannel::ECC_Pawn, ECollisionResponse::ECR_Ignore);
+
+	FootBoxTraceStart = CreateDefaultSubobject<USceneComponent>(TEXT("Foot Box Trace Start"));
+	FootBoxTraceStart->SetupAttachment(GetMesh());
+
+	FootBoxTraceEnd = CreateDefaultSubobject<USceneComponent>(TEXT("Foot Box Trace End"));
+	FootBoxTraceEnd->SetupAttachment(GetMesh());
 
 }
 
@@ -56,6 +71,8 @@ void AEcho::BeginPlay()
 			Subsystem->AddMappingContext(EchoMappingContext, 0);
 		}
 	}
+
+	FootBox->OnComponentBeginOverlap.AddDynamic(this, &AEcho::OnBoxOverlap);
 	
 }
 
@@ -230,5 +247,38 @@ void AEcho::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 		EnhancedInputComponent->BindAction(AttackAction, ETriggerEvent::Triggered, this, &AEcho::Attack);
 	}
 
+}
+
+void AEcho::OnBoxOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
+{
+	const FVector Start = FootBoxTraceStart->GetComponentLocation();
+	const FVector End = FootBoxTraceEnd->GetComponentLocation();
+
+	TArray<AActor* > ActorsToIgnore;
+	ActorsToIgnore.Add(this);
+
+	FHitResult BoxHit;
+
+	UKismetSystemLibrary::BoxTraceSingle(
+		this,
+		Start,
+		End,
+		FVector(5.f, 5.f, 5.f),
+		FootBoxTraceStart->GetComponentRotation(),
+		ETraceTypeQuery::TraceTypeQuery1,
+		false,
+		ActorsToIgnore,
+		EDrawDebugTrace::ForDuration,
+		BoxHit,
+		true);
+}
+
+void AEcho::SetBoxCollsion(ECollisionEnabled::Type CollisonEnabled)
+{
+	FootBox->SetCollisionEnabled(CollisonEnabled);
+	if (EquippedWeapon)
+	{
+		EquippedWeapon->GetWeaponBox()->SetCollisionEnabled(CollisonEnabled);
+	}
 }
 
