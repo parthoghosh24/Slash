@@ -19,6 +19,7 @@ public:
 	void AttachMeshToSocket(USceneComponent* InParent, const FName& InSocketName);
 	void Equip(USceneComponent* InParent, FName InSocketName);
 	FORCEINLINE UBoxComponent* GetWeaponBox() const { return WeaponBox; }
+	TArray<AActor*> IgnoreActors;
 
 protected:
 	
@@ -41,5 +42,10 @@ protected:
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
 	USceneComponent* BoxTraceEnd;
+
+	UFUNCTION(BlueprintImplementableEvent)
+	void CreateFields(const FVector& FieldLocation);
+
+	
 	
 };

@@ -97,6 +97,11 @@ protected:
 	UPROPERTY(VisibleAnywhere, Category = Weapon)
 	AWeapon* EquippedWeapon;
 
+	void PlayAttackMontage();
+	void PlayEquipMontage(const FName& SectionName);
+
+	/*End of montages*/
+
 	UPROPERTY(VisibleAnywhere, Category = "Weapon Properties")
 	UBoxComponent* FootBox;
 
@@ -112,8 +117,7 @@ protected:
 	void HandleJump();
 	void EKeyPressed();
 	void Attack();
-	void PlayAttackMontage();
-	void PlayEquipMontage(FName SectionName);
+	
 
 	UFUNCTION(BlueprintCallable)
 	void AttackEnd();

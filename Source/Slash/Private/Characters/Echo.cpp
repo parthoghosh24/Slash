@@ -142,7 +142,7 @@ void AEcho::PlayAttackMontage()
 			SectionName = FName("Attack2");
 			break;
 		case 2:
-			SectionName = FName("Attack3");
+			SectionName = FName("Attack2");
 			break;
 		default:
 			SectionName = FName("Attack1");
@@ -151,7 +151,7 @@ void AEcho::PlayAttackMontage()
 	}
 }
 
-void AEcho::PlayEquipMontage(FName SectionName)
+void AEcho::PlayEquipMontage(const FName& SectionName)
 {
 	UAnimInstance* AnimInstance = GetMesh()->GetAnimInstance();
 	if (AnimInstance && EquipMontage)
@@ -280,5 +280,6 @@ void AEcho::SetBoxCollsion(ECollisionEnabled::Type CollisonEnabled)
 	{
 		EquippedWeapon->GetWeaponBox()->SetCollisionEnabled(CollisonEnabled);
 	}
+	EquippedWeapon->IgnoreActors.Empty();
 }
 
